@@ -1,0 +1,95 @@
+﻿
+@page "/RoleTransitionList"
+
+@using SchoolRoleManagement.Models
+@using SchoolRoleManagement.Data
+@inject IJSRuntime jsRuntime
+@inject IRoleTransitionListService service
+
+<h1>Role Transition List</h1>
+
+<p>This component demonstrates fetching data from Database.</p>
+
+@if (RoleTransitionList == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Transition Id</th>
+                <th>Transition Description</th>
+                <th>From Role Name</th>
+                <th>To Role Name</th>
+                <th>Edit</th>
+                <th>Delete</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var teacherRoleItem in RoleTransitionList)
+            {
+            <tr>
+                <td>@teacherRoleItem.RoleTransitionId.ToString()</td>
+                <td>@teacherRoleItem.Discription</td>
+                <td>@teacherRoleItem.From.RoleName</td>
+                <td>@teacherRoleItem.To.RoleName</td>
+                <td><input type="button" class="btn btn-primary" @onclick="(() => PrepareForEdit(teacherRoleItem))" data-toggle="modal" data-target="#taskModal" value="Edit" /></td>
+                <td><input type="button" class="btn btn-danger" @onclick="(() => PrepareForDelete(teacherRoleItem))" data-toggle="modal" data-target="#confirmDeleteModal" value="Delete" /></td>
+
+            </tr>
+            }
+        </tbody>
+    </table>
+}
+<div>
+    <input type="button" data-toggle="modal" data-target="#taskModal" class="btn btn-primary" value="Add Task" @onclick="(() => InitializeTaskObject())" />
+</div>
+<TransitionDetail TaskObject=taskObject DataChanged="@DataChanged">
+    <CustomHeader>@customHeader</CustomHeader>
+</TransitionDetail>
+<ConfirmRoleDialog OnClick="@Delete"  />
+
+@code {
+    List<RoleTransition> RoleTransitionList;
+    RoleTransition taskObject = new RoleTransition();
+    string customHeader = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        RoleTransitionList = await service.Get();
+    }
+
+    private void InitializeTaskObject()
+    {
+        taskObject = new RoleTransition();
+        customHeader = "Add New Transition";
+    }
+
+    private async void DataChanged()
+    {
+        RoleTransitionList = await service.Get();
+        StateHasChanged();
+    }
+
+    private void PrepareForEdit(RoleTransition task)
+    {
+        taskObject = task;
+        customHeader = "Edit Transition";
+    }
+
+    private void PrepareForDelete(RoleTransition task)
+    {
+        taskObject = task;
+    }
+
+    private async Task Delete()
+    {
+        var task = await service.Delete(taskObject.RoleTransitionId);
+        await jsRuntime.InvokeAsync<object>("CloseModal", "confirmDeleteModal");
+        RoleTransitionList = await service.Get();
+        taskObject = new RoleTransition();
+        DataChanged();
+    }
+}

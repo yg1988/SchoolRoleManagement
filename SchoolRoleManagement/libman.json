@@ -1,0 +1,48 @@
+{
+  "version": "1.0",
+  "defaultProvider": "cdnjs",
+  "libraries": [
+    {
+      "library": "jquery@3.4.1",
+      "destination": "wwwroot/js/jquery/"
+    },
+    {
+      "provider": "jsdelivr",
+      "library": "bootstrap@4.4.1",
+      "destination": "wwwroot/js/bootstrap/"
+    },
+    {
+      "library": "dagre@0.8.5",
+      "destination": "wwwroot/js/dagre/"
+    },
+    {
+      "library": "lodash.js@4.17.15",
+      "destination": "wwwroot/js/lodash.js/",
+      "files": [
+        "lodash.min.js"
+      ]
+    },
+    {
+      "provider": "jsdelivr",
+      "library": "graphlib@2.1.8",
+      "destination": "wwwroot/js/graphlib/",
+      "files": [
+        "dist/graphlib.min.js"
+      ]
+    },
+    {
+      "library": "dagre-d3@0.6.4",
+      "destination": "wwwroot/js/dagre-d3/",
+      "files": [
+        "dagre-d3.min.js"
+      ]
+    },
+    {
+      "library": "d3@5.15.0",
+      "destination": "wwwroot/js/d3/",
+      "files": [
+        "d3.min.js"
+      ]
+    }
+  ]
+}

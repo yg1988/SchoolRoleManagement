@@ -1,0 +1,122 @@
+﻿
+@using SchoolRoleManagement.Models
+@using SchoolRoleManagement.Data
+@inject IRoleTransitionListService service
+@inject ITeacherRoleListService roleservice
+@inject IJSRuntime jsRuntime
+
+<div class="modal" tabindex="-1" role="dialog" id="taskModal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">@CustomHeader</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+
+                <EditForm Model="@TaskObject" OnValidSubmit="@HandleValidSubmit">
+                    <DataAnnotationsValidator />
+                    <ValidationSummary />
+                    <div class="form-group">
+                        <label for="taskName">Transition Description</label>
+                        <input type="hidden" @bind-value="@TaskObject.RoleTransitionId" />
+                        <InputText id="name-trans" class="form-control" @bind-Value="@TaskObject.Discription" />
+                    </div>
+                    <div class="form-group">
+                        <label for="from">From Role</label>
+                        <InputSelect id="Summary-trans" class="form-control"
+                                     @bind-Value="@FromId">
+                            <option value="">Select</option>
+                            @foreach (var role in ExistingRoleList)
+                            {
+                                <option value="@role.TeacherRoleId">
+                                    @role.RoleName
+                                </option>
+                            }
+                        </InputSelect>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="to">To Role</label>
+                        <InputSelect id="Summary-trans2" class="form-control"
+                                     @bind-Value="@ToId">
+                            <option value="">Select</option>
+                            @foreach (var role in ExistingRoleList)
+                            {
+                                <option value="@role.TeacherRoleId">
+                                    @role.RoleName
+                                </option>
+                            }
+                        </InputSelect>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                </EditForm>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public RoleTransition TaskObject { get; set; }
+
+    [Parameter]
+    public Action DataChanged { get; set; }
+
+    [Parameter]
+    public RenderFragment CustomHeader { get; set; }
+
+    public string FromId { get; set; }
+
+    public bool fristRun { get; set; } = true;
+
+    public string ToId { get; set; }
+
+    List<TeacherRole> ExistingRoleList { get; set; }
+
+    private async Task CloseTaskModal()
+    {
+        await jsRuntime.InvokeAsync<object>("CloseModal", "taskModal");
+    }
+
+    private async void HandleValidSubmit()
+    {
+        TaskObject.From = ExistingRoleList.Find(t => t.TeacherRoleId.ToString() == FromId);
+        TaskObject.To = ExistingRoleList.Find(t => t.TeacherRoleId.ToString() == ToId);
+        if (TaskObject.RoleTransitionId == 0)
+        {
+
+            await service.Add(TaskObject);
+        }
+        else
+        {
+            await service.Update(TaskObject);
+        }
+        await CloseTaskModal();
+        DataChanged?.Invoke();
+    }
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+        if (fristRun)
+        {
+            ExistingRoleList = roleservice.Get().Result;
+            fristRun = false;
+        }
+
+        if (TaskObject.RoleTransitionId != 0)
+        {
+            FromId = TaskObject.From.TeacherRoleId.ToString();
+            ToId = TaskObject.To.TeacherRoleId.ToString();
+        }
+    }
+    protected override bool ShouldRender()
+    {
+        return base.ShouldRender();
+    }
+
+}

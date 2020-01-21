@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29613.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SchoolRoleManagement", "SchoolRoleManagement\SchoolRoleManagement.csproj", "{5E3E3894-005A-4E86-83DB-721BBDEDD51B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5E3E3894-005A-4E86-83DB-721BBDEDD51B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5E3E3894-005A-4E86-83DB-721BBDEDD51B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5E3E3894-005A-4E86-83DB-721BBDEDD51B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5E3E3894-005A-4E86-83DB-721BBDEDD51B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {CC9CEAFE-D360-4B10-9BFB-D6639C871ED7}
+	EndGlobalSection
+EndGlobal

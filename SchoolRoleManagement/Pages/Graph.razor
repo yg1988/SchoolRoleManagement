@@ -1,0 +1,27 @@
+﻿@page "/"
+
+@inject IJSRuntime jsRuntime
+@using SchoolRoleManagement.Models
+@using SchoolRoleManagement.Data
+@inject IRoleTransitionListService transitionService
+@inject ITeacherRoleListService roleService
+
+<h1>Graph</h1>
+
+
+
+<svg width="960" height="900"></svg>
+
+@code {
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        var roleTransitionsFuture = transitionService.Get();
+        var roleFuture = roleService.Get();
+
+        var roleTransitions = await roleTransitionsFuture;
+        var roles = await roleFuture;
+        await jsRuntime.InvokeAsync<object>("GenerateGraph", new { roles=roles, transitions=roleTransitions});
+    }
+
+}

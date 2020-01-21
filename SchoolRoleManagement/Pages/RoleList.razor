@@ -1,0 +1,93 @@
+﻿
+@page "/RoleList"
+
+@using SchoolRoleManagement.Models
+@using SchoolRoleManagement.Data
+@inject IJSRuntime jsRuntime
+@inject ITeacherRoleListService service
+
+<h1>Teacher Role List</h1>
+
+<p>This component demonstrates fetching data from Database.</p>
+
+@if (teacherRoleList == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Teacher Role Id</th>
+                <th>Role Name</th>
+                <th>Requires Tenure</th>
+                <th>Edit</th>
+                <th>Delete</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var teacherRoleItem in teacherRoleList)
+            {
+                <tr>
+                    <td>@teacherRoleItem.TeacherRoleId.ToString()</td>
+                    <td>@teacherRoleItem.RoleName</td>
+                    <td>@teacherRoleItem.RequireTenure.ToString()</td>
+                    <td><input type="button" class="btn btn-primary" @onclick="(() => PrepareForEdit(teacherRoleItem))" data-toggle="modal" data-target="#taskModal" value="Edit" /></td>
+                    <td><input type="button" class="btn btn-danger" @onclick="(() => PrepareForDelete(teacherRoleItem))" data-toggle="modal" data-target="#confirmDeleteModal" value="Delete" /></td>
+
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+<div>
+    <input type="button" data-toggle="modal" data-target="#taskModal" class="btn btn-primary" value="Add Task" @onclick="(() => InitializeTaskObject())" />
+</div>
+<RoleDetail TaskObject=taskObject DataChanged="@DataChanged">
+    <CustomHeader>@customHeader</CustomHeader>
+</RoleDetail>
+<ConfirmRoleDialog OnClick="@Delete"  />
+
+@code {
+    List<TeacherRole> teacherRoleList;
+    TeacherRole taskObject = new TeacherRole();
+    string customHeader = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        teacherRoleList = await service.Get();
+    }
+
+    private void InitializeTaskObject()
+    {
+        taskObject = new TeacherRole();
+        customHeader = "Add New Task";
+    }
+
+    private async void DataChanged()
+    {
+        teacherRoleList = await service.Get();
+        StateHasChanged();
+    }
+
+    private void PrepareForEdit(TeacherRole task)
+    {
+        taskObject = task;
+        customHeader = "Edit Task";
+    }
+
+    private void PrepareForDelete(TeacherRole task)
+    {
+        taskObject = task;
+    }
+
+    private async Task Delete()
+    {
+        var task = await service.Delete(taskObject.TeacherRoleId);
+        await jsRuntime.InvokeAsync<object>("CloseModal", "confirmDeleteModal");
+        teacherRoleList = await service.Get();
+        taskObject = new TeacherRole();
+        DataChanged();
+    }
+}
